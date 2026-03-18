@@ -8,22 +8,20 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-public class Application {
-    private int PORT;
+
+public class ApplicationDistant {
+    private final static int PORT = 2000;
     private final static String HOST = "localhost";
     private final static int TIMEOUT = 5000;
 
     public static void main(String[] args) {
-        Application client = new Application();
+        ApplicationDistant client = new ApplicationDistant();
         client.run();
     }
 
     public void run() {
 
-        try (
-                BufferedReader clavier = new BufferedReader(new InputStreamReader(System.in))
-        ) {
-            choosePort(clavier);
+        try (BufferedReader clavier = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Tentative de connexion au serveur avec le port " + PORT + " ...");
             try (Socket socket = createSocket(); BufferedReader sin = new BufferedReader(new InputStreamReader(socket.getInputStream())); PrintWriter sout = new PrintWriter(socket.getOutputStream(), true)) {
                 displayConnectionInfo(socket);
@@ -36,26 +34,6 @@ public class Application {
             System.err.println("Timeout de connexion. Le serveur met trop de temps à répondre.");
         } catch (IOException e) {
             System.err.println("Erreur de communication: " + e.getMessage());
-        }
-    }
-
-    private void choosePort(BufferedReader clavier) throws IOException {
-        while (true) {
-            System.out.print("1. Une réservation \n2. Un emprunt \n3. Un retour\n");
-            String choix = clavier.readLine();
-            switch (choix) {
-                case "1":
-                    PORT = 2000;
-                    return;
-                case "2":
-                    PORT = 2001;
-                    return;
-                case "3":
-                    PORT = 2002;
-                    return;
-                default:
-                    System.out.println("Choix invalide. Veuillez entrer 1, 2 ou 3.");
-            }
         }
     }
 
