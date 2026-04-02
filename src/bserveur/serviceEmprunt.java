@@ -9,14 +9,8 @@ import java.net.Socket;
  * Service d'emprunt – port 2001 (borne en médiathèque).
  *
  * Protocole bttp2.0 :
- *
- *   S→C : 200 Bienvenue...
  *   C→S : EMPRUNTER <numAbonne> <idDoc>
- *   S→C : 200 Emprunt enregistré. Bonne lecture/visionnage !
- *    ou  : 400 <message d'erreur>
- *    ou  : 403 Abonné banni
  *   C→S : FIN
- *   S→C : 200 Au revoir
  */
 public class serviceEmprunt extends Service {
 
@@ -34,12 +28,10 @@ public class serviceEmprunt extends Service {
         String ligne;
         while ((ligne = sin.readLine()) != null) {
             ligne = ligne.trim();
-
             if (ligne.equalsIgnoreCase("FIN")) {
                 sout.println("200 Au revoir.");
                 break;
             }
-
             traiterCommande(ligne);
         }
     }
@@ -52,37 +44,43 @@ public class serviceEmprunt extends Service {
             return;
         }
 
-        int numAbonne;
-        try {
-            numAbonne = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException e) {
-            sout.println("400 Numéro d'abonné invalide.");
-            return;
-        }
+        Abonne abonne = validerAbonne(parts[1]);
+        if (abonne == null) return;
 
-        Abonne abonne = mediatheque.getAbonne(numAbonne);
-        if (abonne == null) {
-            sout.println("400 Abonné introuvable (numéro " + numAbonne + ").");
-            return;
-        }
-        if (abonne.isEstBanni()) {
-            sout.println("403 Vous êtes banni de la médiathèque.");
-            return;
-        }
-
-        String idDoc = parts[2];
-        Document doc = mediatheque.getDocument(idDoc);
-        if (doc == null) {
-            sout.println("400 Document introuvable (id : " + idDoc + ").");
-            return;
-        }
+        Document doc = validerDocument(parts[2]);
+        if (doc == null) return;
 
         try {
             doc.emprunt(abonne);
-            sout.println("200 Emprunt enregistré pour " + abonne.getNom()
-                    + ". Bonne lecture/visionnage !");
+            sout.println("200 Emprunt enregistré pour " + abonne.getNom() + ". Bonne lecture/visionnage !");
         } catch (EmpruntException e) {
             sout.println("400 " + e.getMessage());
         }
+    }
+
+    private Abonne validerAbonne(String numStr) {
+        int num;
+        try { num = Integer.parseInt(numStr); }
+        catch (NumberFormatException e) {
+            sout.println("400 Numéro d'abonné invalide.");
+            return null;
+        }
+        Abonne ab = mediatheque.getAbonne(num);
+        if (ab == null) {
+            sout.println("400 Abonné introuvable (numéro " + num + ").");
+            return null;
+        }
+        if (ab.isEstBanni()) {
+            sout.println("403 Vous êtes banni de la médiathèque jusqu'au "
+                    + ab.getDateFinBan() + ".");
+            return null;
+        }
+        return ab;
+    }
+
+    private Document validerDocument(String idDoc) {
+        Document doc = mediatheque.getDocument(idDoc);
+        if (doc == null) sout.println("400 Document introuvable (id : " + idDoc + ").");
+        return doc;
     }
 }
