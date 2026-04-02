@@ -23,12 +23,10 @@ public abstract class DocumentBase implements Document {
 
     public enum Etat { DISPONIBLE, RESERVE, EMPRUNTE }
 
-    private static final ScheduledExecutorService scheduler =
-            Executors.newScheduledThreadPool(2);
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
     private static final long DUREE_RESERVATION_HEURES = 2;
-    private static final DateTimeFormatter FMT =
-            DateTimeFormatter.ofPattern("HH'h'mm");
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("HH'h'mm");
 
     protected final String idDoc;
     protected final String titre;
@@ -52,8 +50,7 @@ public abstract class DocumentBase implements Document {
             throw new ReservationException("Ce document est déjà emprunté.");
         }
         if (etat == Etat.RESERVE) {
-            throw new ReservationException(
-                    "Ce document est déjà réservé jusqu'à " + finReservation.format(FMT) + ".");
+            throw new ReservationException("Ce document est déjà réservé jusqu'à " + finReservation.format(FMT) + ".");
         }
 
         etat = Etat.RESERVE;
@@ -64,8 +61,8 @@ public abstract class DocumentBase implements Document {
             synchronized (this) {
                 if (etat == Etat.RESERVE) {
                     System.out.println("[Timer] Réservation expirée pour " + idDoc);
-                    etat           = Etat.DISPONIBLE;
-                    abonneActuel   = null;
+                    etat = Etat.DISPONIBLE;
+                    abonneActuel = null;
                     finReservation = null;
                 }
             }
@@ -74,20 +71,17 @@ public abstract class DocumentBase implements Document {
 
     @Override
     public synchronized void emprunt(Abonne ab) throws EmpruntException {
-        if (etat == Etat.EMPRUNTE) {
-            throw new EmpruntException("Ce document est déjà emprunté.");
+        if (etat == Etat.EMPRUNTE) {throw new EmpruntException("Ce document est déjà emprunté.");
         }
         if (etat == Etat.RESERVE && !abonneActuel.getNumero().equals(ab.getNumero())) {
-            throw new EmpruntException(
-                    "Ce document est réservé pour un autre abonné jusqu'à "
-                            + finReservation.format(FMT) + ".");
+            throw new EmpruntException("Ce document est réservé pour un autre abonné jusqu'à " + finReservation.format(FMT) + ".");
         }
 
         verifierEmprunt(ab);
 
         annulerTimer();
-        etat           = Etat.EMPRUNTE;
-        abonneActuel   = ab;
+        etat = Etat.EMPRUNTE;
+        abonneActuel = ab;
         finReservation = null;
     }
 
@@ -97,8 +91,8 @@ public abstract class DocumentBase implements Document {
             throw new RetourException("Ce document est déjà disponible.");
         }
         annulerTimer();
-        etat           = Etat.DISPONIBLE;
-        abonneActuel   = null;
+        etat = Etat.DISPONIBLE;
+        abonneActuel = null;
         finReservation = null;
     }
 
@@ -108,9 +102,9 @@ public abstract class DocumentBase implements Document {
      */
     protected void verifierEmprunt(Abonne ab) throws EmpruntException { /* rien par défaut */ }
 
-    public synchronized Etat getEtat()               { return etat; }
-    public synchronized Abonne getAbonneActuel()     { return abonneActuel; }
-    public synchronized LocalDateTime getFinReservation() { return finReservation; }
+    public synchronized Etat getEtat(){ return etat; }
+    public synchronized Abonne getAbonneActuel(){ return abonneActuel; }
+    public synchronized LocalDateTime getFinReservation(){ return finReservation; }
 
     private void annulerTimer() {
         if (timerReservation != null) {

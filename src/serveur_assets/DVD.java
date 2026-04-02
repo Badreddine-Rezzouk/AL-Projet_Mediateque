@@ -12,17 +12,16 @@ public class DVD extends DocumentBase {
 
     private static final int AGE_MINIMUM = 16;
 
-    private final String  auteur;
-    private final String  genre;
-    private final int     annee;
+    private final String auteur;
+    private final String genre;
+    private final int annee;
     private final boolean adulte;
 
-    public DVD(String idDoc, String titre, String auteur,
-               String genre, int annee, boolean adulte) {
+    public DVD(String idDoc, String titre, String auteur, String genre, int annee, boolean adulte) {
         super(idDoc, titre);
         this.auteur = auteur;
-        this.genre  = genre;
-        this.annee  = annee;
+        this.genre = genre;
+        this.annee = annee;
         this.adulte = adulte;
     }
 
@@ -36,18 +35,13 @@ public class DVD extends DocumentBase {
                     .toLocalDate();
             int age = Period.between(naissance, LocalDate.now()).getYears();
             if (age < AGE_MINIMUM) {
-                throw new EmpruntException(
-                        "Vous devez avoir au moins " + AGE_MINIMUM
-                                + " ans pour emprunter ce DVD (âge actuel : " + age + " ans).");
+                throw new EmpruntException("Vous devez avoir au moins " + AGE_MINIMUM + " ans pour emprunter ce DVD (âge actuel : " + age + " ans).");
             }
         }
     }
 
     @Override
     public String toString() {
-        return "[DVD] " + titre + " (" + annee + ") – " + auteur
-                + " | Genre : " + genre
-                + (adulte ? " | +16" : "")
-                + " | État : " + getEtat();
+        return "[DVD] " + titre + " (" + annee + ") – " + auteur + " | Genre : " + genre + (adulte ? " | +16" : "") + " | État : " + getEtat();
     }
 }

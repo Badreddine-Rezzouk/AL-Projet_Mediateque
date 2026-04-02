@@ -17,7 +17,7 @@ public class Abonne {
 
     public Integer getNumero(){ return numero; }
     public String  getNom(){ return nom; }
-    public Date    getDateNaissance(){ return dateNaissance; }
+    public Date getDateNaissance(){ return dateNaissance; }
     public boolean isEstBanni(){ return estBanni; }
 
     public void setEstBanni(boolean estBanni){ this.estBanni = estBanni; }

@@ -10,9 +10,9 @@ import java.net.Socket;
  */
 public abstract class Service implements Runnable {
 
-    protected final Socket      client_socket;
+    protected final Socket client_socket;
     protected final BufferedReader sin;
-    protected final PrintWriter    sout;
+    protected final PrintWriter sout;
 
     public Service(Socket client_socket) {
         this.client_socket = client_socket;
@@ -25,7 +25,7 @@ public abstract class Service implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run(){
         try {
             executeService();
         } catch (IOException e) {

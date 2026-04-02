@@ -82,11 +82,8 @@ public class serviceReserver extends Service {
 
         try {
             doc.reservation(abonne);
-            String heureFin = (doc instanceof DocumentBase)
-                    ? ((DocumentBase) doc).getFinReservation().format(FMT)
-                    : "dans 2h";
-            sout.println("200 Réservation confirmée jusqu'à " + heureFin
-                    + ". Passez récupérer votre document avant cette heure.");
+            String heureFin = (doc instanceof DocumentBase) ? ((DocumentBase) doc).getFinReservation().format(FMT) : "dans 2h";
+            sout.println("200 Réservation confirmée jusqu'à " + heureFin + ". Passez récupérer votre document avant cette heure.");
         } catch (ReservationException e) {
             sout.println("400 " + e.getMessage());
         }

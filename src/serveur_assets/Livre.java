@@ -7,18 +7,16 @@ package serveur_assets;
 public class Livre extends DocumentBase {
 
     private final String auteur;
-    private final int    nombrePages;
+    private final int nombrePages;
 
     public Livre(String idDoc, String titre, String auteur, int nombrePages) {
         super(idDoc, titre);
-        this.auteur      = auteur;
+        this.auteur = auteur;
         this.nombrePages = nombrePages;
     }
 
     @Override
     public String toString() {
-        return "[Livre] " + titre + " – " + auteur
-                + " | " + nombrePages + " pages"
-                + " | État : " + getEtat();
+        return "[Livre] " + titre + " – " + auteur + " | " + nombrePages + " pages" + " | État : " + getEtat();
     }
 }
