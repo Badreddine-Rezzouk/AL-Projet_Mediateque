@@ -10,10 +10,11 @@ import java.net.SocketTimeoutException;
 
 public class ApplicationMediateque {
     private int PORT;
+    private int SERVERTYPE;
     private final static String HOST = "localhost";
     private final static int TIMEOUT = 5000;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ApplicationMediateque client = new ApplicationMediateque();
         client.run();
     }
@@ -23,6 +24,7 @@ public class ApplicationMediateque {
         try (
                 BufferedReader clavier = new BufferedReader(new InputStreamReader(System.in))
         ) {
+            System.out.println("Tentative de récuperation de la configuration du client...");
             choosePort(clavier);
             System.out.println("Tentative de connexion au serveur avec le port " + PORT + " ...");
             try (Socket socket = createSocket(); BufferedReader sin = new BufferedReader(new InputStreamReader(socket.getInputStream())); PrintWriter sout = new PrintWriter(socket.getOutputStream(), true)) {
@@ -41,6 +43,7 @@ public class ApplicationMediateque {
 
     private void choosePort(BufferedReader clavier) throws IOException {
         while (true) {
+            System.out.println("Impossible de récupérer les paramètres par défaut, repli sur la configuration de démarrage.\nSelectionnez une configuration serveur:");
             System.out.print("1. Serveur Emprunt \n2. Serveur Retour\n");
             String choix = clavier.readLine();
             switch (choix) {

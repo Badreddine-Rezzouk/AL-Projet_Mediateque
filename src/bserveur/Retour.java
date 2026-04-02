@@ -1,30 +1,16 @@
 package bserveur;
 
 import java.io.IOException;
-import java.net.Socket;
 
-public class Retour extends Service {
+public class Retour {
     private final static int PORT = 2002;
 
-    public Retour(Socket client_socket) {
-        super(client_socket);
-    }
-
-    public static void main(String[] args) {
-        try{
-            new Thread(new Serveur(PORT, Service.class)).start();
+    static void main(String[] args) {
+        try {
+            new Thread(new Serveur(PORT, serviceRetour.class)).start();
+            System.out.println("Serveur Retour démarré sur le port " + PORT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void run() {
-
-    }
-
-    @Override
-    protected void executeService() throws IOException {
-
     }
 }

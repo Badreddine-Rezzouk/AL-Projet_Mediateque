@@ -6,7 +6,7 @@ import java.net.*;
 
 public class Serveur implements Runnable {
     private final ServerSocket listen_socket;
-    private Class<? extends Service> serviceClass;
+    private final Class<? extends Service> serviceClass;
 
     public Serveur(int port, Class<? extends Service> serviceClass) throws IOException {
         listen_socket = new ServerSocket(port);

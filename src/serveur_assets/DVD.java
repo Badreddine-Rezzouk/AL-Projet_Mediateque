@@ -1,53 +1,53 @@
 package serveur_assets;
 
-public class DVD implements Document{
-    private String idDoc;
-    private String titre;
-    private String auteur;
-    private String genre;
-    private int annee;
-    private boolean reserve;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 
-    public DVD(String idDoc, String titre, String auteur, String genre, int annee) {
-        this.idDoc = idDoc;
-        this.titre = titre;
+/**
+ * DVD – implémente Document via DocumentBase.
+ * Ajoute la vérification d'âge (16+) lors de l'emprunt si adulte == true.
+ */
+public class DVD extends DocumentBase {
+
+    private static final int AGE_MINIMUM = 16;
+
+    private final String  auteur;
+    private final String  genre;
+    private final int     annee;
+    private final boolean adulte;
+
+    public DVD(String idDoc, String titre, String auteur,
+               String genre, int annee, boolean adulte) {
+        super(idDoc, titre);
         this.auteur = auteur;
-        this.genre = genre;
-        this.annee = annee;
-        this.reserve = false;
+        this.genre  = genre;
+        this.annee  = annee;
+        this.adulte = adulte;
     }
 
-
+    /** Vérifie l'âge minimum si le DVD est réservé aux adultes. */
     @Override
-    public String idDoc() {
-        return idDoc;
-    }
-
-    @Override
-    public void reservation(Abonne ab) throws ReservationException {
-        try{
-            if (!reserve) throw new ReservationException("Deja reservé");
-            reserve = true;
-        } catch(ReservationException e) {
-            System.out.println("Erreur : " + e.getMessage());
+    protected void verifierEmprunt(Abonne ab) throws EmpruntException {
+        if (adulte) {
+            LocalDate naissance = ab.getDateNaissance()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            int age = Period.between(naissance, LocalDate.now()).getYears();
+            if (age < AGE_MINIMUM) {
+                throw new EmpruntException(
+                        "Vous devez avoir au moins " + AGE_MINIMUM
+                                + " ans pour emprunter ce DVD (âge actuel : " + age + " ans).");
+            }
         }
     }
 
     @Override
-    public void emprunt(Abonne ab) throws EmpruntException {
-        try{
-            if (reserve) throw new EmpruntException("Deja reservé");
-        } catch(EmpruntException e) {
-            System.out.println("Erreur : " + e.getMessage());
-        }
-
-    }
-
-    @Override
-    public void retour() throws RetourException {
-
-    }
     public String toString() {
-        return "DVD : " + titre + " par " + auteur + "\nGenre :" + genre + "\nAnnee :" + annee;
+        return "[DVD] " + titre + " (" + annee + ") – " + auteur
+                + " | Genre : " + genre
+                + (adulte ? " | +16" : "")
+                + " | État : " + getEtat();
     }
 }

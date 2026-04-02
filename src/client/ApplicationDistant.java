@@ -14,7 +14,7 @@ public class ApplicationDistant {
     private final static String HOST = "localhost";
     private final static int TIMEOUT = 5000;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ApplicationDistant client = new ApplicationDistant();
         client.run();
     }
