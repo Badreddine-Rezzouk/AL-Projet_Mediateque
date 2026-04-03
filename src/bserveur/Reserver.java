@@ -7,6 +7,7 @@ public class Reserver {
     static void main(String[] args) {
         try{
             new Thread(new Serveur(PORT, serviceReserver.class)).start();
+            System.out.println("Serveur Reserver démarré sur le port " + PORT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
