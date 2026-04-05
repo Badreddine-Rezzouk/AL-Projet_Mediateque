@@ -19,17 +19,17 @@ public class Mediatheque {
 
     private Mediatheque() {
 
-        // --- Abonnés ---
+
         ajouterAbonne(new Abonne(1, "Dupont Alice",new Date(90, Calendar.JANUARY, 15)));
         ajouterAbonne(new Abonne(2, "Martin Bob",new Date(85, Calendar.JUNE, 22)));
         ajouterAbonne(new Abonne(3, "Durand Charlie",new Date(110, Calendar.APRIL,  8)));
 
-        // --- Livres ---
+
         ajouterDocument(new Livre("L001", "Le Petit Prince","Saint-Exupéry",96));
         ajouterDocument(new Livre("L002", "1984","Orwell",328));
         ajouterDocument(new Livre("L003", "Les Misérables","Hugo",1900));
 
-        // --- DVDs ---
+
         ajouterDocument(new DVD("D001", "Inception","Nolan","SF",2010, false));
         ajouterDocument(new DVD("D002", "Pulp Fiction","Tarantino","Thriller",1994, true));
         ajouterDocument(new DVD("D003", "Le Roi Lion","Allers","Animation",1994, false));

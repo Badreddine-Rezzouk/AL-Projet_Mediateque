@@ -18,7 +18,7 @@ public class Serveur implements Runnable {
         try {
             while (true) {
                 System.out.println("J'attends un client...");
-                Socket client_socket = listen_socket.accept(); // Appel bloquant !
+                Socket client_socket = listen_socket.accept();
                 System.out.println("Ca y est ! J'ai un client.");
 
                 System.out.print("Adresse IP locale : " + client_socket.getLocalAddress());

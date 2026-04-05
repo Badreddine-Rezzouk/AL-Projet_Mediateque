@@ -54,9 +54,7 @@ public class serviceReserver extends Service {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Dispatch des commandes                                              //
-    // ------------------------------------------------------------------ //
+
     private void traiterCommande(String ligne) {
         String[] parts = ligne.split("\\s+");
         if (parts.length == 0) return;
@@ -69,9 +67,7 @@ public class serviceReserver extends Service {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  RESERVER – avec BretteSoft Grand chaman                           //
-    // ------------------------------------------------------------------ //
+
     private void traiterReservation(String[] parts) {
         if (parts.length != 3) {
             sout.println("400 Usage : RESERVER <numAbonne> <idDoc>");
@@ -84,14 +80,14 @@ public class serviceReserver extends Service {
         Document doc    = validerDocument(parts[2]);
         if (doc == null) return;
 
-        // Tentative de réservation
+
         try {
             doc.reservation(abonne);
             String fin = (doc instanceof DocumentBase)
                     ? ((DocumentBase) doc).getFinReservation().format(FMT) : "dans 2h";
             sout.println("200 Réservation confirmée jusqu'à " + fin + ".");
         } catch (ReservationException e) {
-            // -- BretteSoft Grand chaman --
+
             if (doc instanceof DocumentBase) {
                 DocumentBase db = (DocumentBase) doc;
                 long restantes  = db.getSecondesRestantes();
@@ -101,7 +97,7 @@ public class serviceReserver extends Service {
                     return;
                 }
             }
-            // Refus normal
+
             sout.println("400 " + e.getMessage());
         }
     }
@@ -114,7 +110,7 @@ public class serviceReserver extends Service {
         sout.println("200 [Grand chaman] Le document est réservé mais libérable dans "
                 + restantesSecondes + "s. Musique céleste en cours... 🎵");
 
-        long attenteMs = (restantesSecondes + 5) * 1000L; // +5s de marge
+        long attenteMs = (restantesSecondes + 5) * 1000L;
         try {
             doc.attendreDisponibilite(attenteMs);
         } catch (InterruptedException e) {
@@ -123,9 +119,9 @@ public class serviceReserver extends Service {
             return;
         }
 
-        // Vérifier l'état après l'attente
+
         if (doc.getEtat() == DocumentBase.Etat.DISPONIBLE) {
-            // La réservation de B a expiré sans qu'il passe → on réserve pour A
+
             try {
                 doc.reservation(abonne);
                 String fin = doc.getFinReservation().format(FMT);
@@ -142,9 +138,7 @@ public class serviceReserver extends Service {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  ALERTER – BretteSoft Sitting Bull                                  //
-    // ------------------------------------------------------------------ //
+
     private void traiterAlerte(String[] parts) {
         if (parts.length != 4) {
             sout.println("400 Usage : ALERTER <numAbonne> <idDoc> <email>");
@@ -177,9 +171,7 @@ public class serviceReserver extends Service {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Validation commune                                                  //
-    // ------------------------------------------------------------------ //
+
     private Abonne validerAbonne(String numStr) {
         int num;
         try { num = Integer.parseInt(numStr); }

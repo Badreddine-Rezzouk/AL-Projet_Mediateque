@@ -51,9 +51,6 @@ public abstract class DocumentBase implements Document {
         this.titre = titre;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Interface Document                                                  //
-    // ------------------------------------------------------------------ //
 
     @Override
     public String idDoc() { return idDoc; }
@@ -104,7 +101,7 @@ public abstract class DocumentBase implements Document {
         dateEmprunt    = LocalDateTime.now(); // BretteSoft Géronimo
         finReservation = null;
 
-        notifyAll(); // Grand chaman : B a emprunté → réveille A pour l'informer de l'échec
+        notifyAll();
     }
 
     @Override
@@ -129,14 +126,10 @@ public abstract class DocumentBase implements Document {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Hook pour les vérifications spécifiques (ex: âge DVD)              //
-    // ------------------------------------------------------------------ //
+
     protected void verifierEmprunt(Abonne ab) throws EmpruntException {}
 
-    // ------------------------------------------------------------------ //
-    //  BretteSoft Grand chaman                                            //
-    // ------------------------------------------------------------------ //
+
 
     /** Secondes restantes avant expiration de la réservation courante (0 si non réservé). */
     public synchronized long getSecondesRestantes() {
@@ -158,16 +151,12 @@ public abstract class DocumentBase implements Document {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  BretteSoft Sitting Bull                                            //
-    // ------------------------------------------------------------------ //
+
     public synchronized void ajouterAlerte(String email) {
         if (!alertesEmail.contains(email)) alertesEmail.add(email);
     }
 
-    // ------------------------------------------------------------------ //
-    //  Accesseurs                                                          //
-    // ------------------------------------------------------------------ //
+
     public synchronized Etat          getEtat()           { return etat; }
     public synchronized Abonne        getAbonneActuel()   { return abonneActuel; }
     public synchronized LocalDateTime getFinReservation() { return finReservation; }

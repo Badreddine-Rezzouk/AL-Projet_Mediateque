@@ -20,9 +20,7 @@ public class MailService {
     private static final String SEPARATEUR =
             "═══════════════════════════════════════════════════";
 
-    // ------------------------------------------------------------------ //
-    //  API publique                                                        //
-    // ------------------------------------------------------------------ //
+
 
     /**
      * Simule l'envoi d'une alerte à chaque email en attente pour un document.
@@ -57,10 +55,6 @@ public class MailService {
                         + "— La tribu BretteSoft©"
         );
     }
-
-    // ------------------------------------------------------------------ //
-    //  Simulation locale                                                   //
-    // ------------------------------------------------------------------ //
 
     private static void envoyerEmailSimule(String destinataire, String sujet, String corps) {
         System.out.println("\n" + SEPARATEUR);

@@ -119,7 +119,6 @@ public class ApplicationDistant {
                 if (!code.equals("200") || !sin.ready()) break;
             }
         } catch (SocketTimeoutException e) {
-            // Timeout = le serveur n'a plus rien à envoyer, on continue
         }
     }
 

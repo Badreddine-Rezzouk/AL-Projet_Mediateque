@@ -65,7 +65,7 @@ public class serviceRetour extends Service {
             return;
         }
 
-        // -- BretteSoft Géronimo : récupérer l'abonné et la date d'emprunt AVANT retour() --
+
         Abonne        abonne      = null;
         LocalDateTime dateEmprunt = null;
 
@@ -75,7 +75,7 @@ public class serviceRetour extends Service {
             dateEmprunt = db.getDateEmprunt();
         }
 
-        // Enregistrer le retour
+
         try {
             doc.retour();
         } catch (RetourException e) {
@@ -85,15 +85,15 @@ public class serviceRetour extends Service {
 
         sout.println("200 Retour enregistré. Merci !");
 
-        // -- BretteSoft Géronimo : vérification post-retour --
+
         if (abonne != null) {
             if (degrade) {
-                // Dégradation constatée → ban immédiat
+
                 abonne.bannir();
                 sout.println("200 [Géronimo] Document dégradé constaté. "
                         + abonne.getNom() + " est banni pour 1 mois.");
             } else if (dateEmprunt != null) {
-                // Vérification du délai
+
                 long semaines = ChronoUnit.WEEKS.between(dateEmprunt, LocalDateTime.now());
                 if (semaines > DELAI_MAX_SEMAINES) {
                     abonne.bannir();

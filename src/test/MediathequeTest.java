@@ -24,19 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MediathequeTest {
 
-    // ------------------------------------------------------------------ //
-    //  Sous-classe concrète de DocumentBase pour les tests               //
-    //  (DocumentBase est abstraite, on a besoin d'une implémentation)    //
-    // ------------------------------------------------------------------ //
     static class DocumentTest extends DocumentBase {
         public DocumentTest(String id, String titre) {
             super(id, titre);
         }
     }
 
-    // ------------------------------------------------------------------ //
-    //  Helpers                                                             //
-    // ------------------------------------------------------------------ //
+
     private Abonne abonneAdulte() {
         // Né en 1990 → 35 ans en 2025
         return new Abonne(1, "Dupont Alice", new Date(90, 0, 15));
@@ -51,9 +45,7 @@ class MediathequeTest {
         return new Abonne(3, "Durand Bob", new Date(85, 5, 22));
     }
 
-    // ================================================================== //
-    //  1. Machine à états – DocumentBase                                  //
-    // ================================================================== //
+
     @Nested
     @DisplayName("Machine à états DocumentBase")
     class EtatTests {
@@ -163,9 +155,7 @@ class MediathequeTest {
         }
     }
 
-    // ================================================================== //
-    //  2. DVD – vérification d'âge                                       //
-    // ================================================================== //
+
     @Nested
     @DisplayName("DVD – vérification d'âge")
     class DVDAgeTests {
@@ -196,9 +186,7 @@ class MediathequeTest {
         }
     }
 
-    // ================================================================== //
-    //  3. BretteSoft© Géronimo – bannissement                            //
-    // ================================================================== //
+
     @Nested
     @DisplayName("BretteSoft© Géronimo – bannissement")
     class GeronimoTests {
@@ -232,7 +220,7 @@ class MediathequeTest {
             doc.retour();
             assertNull(doc.getDateEmprunt(), "dateEmprunt doit être null après retour");
 
-            // Vérification que la date était bien récente (< 1 seconde)
+
             assertTrue(
                 java.time.Duration.between(dateAvantRetour, LocalDateTime.now()).getSeconds() < 5
             );
@@ -241,8 +229,7 @@ class MediathequeTest {
         @Test
         @DisplayName("Simulation de retard > 2 semaines → ban à détecter côté service")
         void simulationRetard() {
-            // On vérifie que la logique de calcul fonctionne :
-            // Si dateEmprunt = il y a 15 jours → 2 semaines → ban
+
             LocalDateTime dateEmprunt = LocalDateTime.now().minusWeeks(3);
             long semaines = java.time.temporal.ChronoUnit.WEEKS.between(
                 dateEmprunt, LocalDateTime.now()
@@ -255,14 +242,12 @@ class MediathequeTest {
         void abonneBanniBloque() {
             Abonne ab = abonneAdulte();
             ab.bannir();
-            // Le service vérifie isEstBanni() avant toute opération
+
             assertTrue(ab.isEstBanni());
         }
     }
 
-    // ================================================================== //
-    //  4. BretteSoft© Grand chaman – attente sur réservation expirante   //
-    // ================================================================== //
+
     @Nested
     @DisplayName("BretteSoft© Grand chaman – file d'attente")
     class GrandChamanTests {
@@ -294,10 +279,10 @@ class MediathequeTest {
             AtomicBoolean attenteFinie = new AtomicBoolean(false);
             AtomicReference<Exception> erreur = new AtomicReference<>();
 
-            // Thread A : attend que le document soit disponible
+
             Thread threadA = new Thread(() -> {
                 try {
-                    doc.attendreDisponibilite(5000); // 5s max
+                    doc.attendreDisponibilite(5000);
                     attenteFinie.set(true);
                 } catch (InterruptedException e) {
                     erreur.set(e);
@@ -305,9 +290,9 @@ class MediathequeTest {
             });
 
             threadA.start();
-            Thread.sleep(200); // Laisser A se mettre en attente
+            Thread.sleep(200);
 
-            // Thread B : effectue le retour → doit réveiller A
+
             doc.retour();
             threadA.join(2000);
 
@@ -326,10 +311,10 @@ class MediathequeTest {
             doc.attendreDisponibilite(500); // 500ms max
             long duree = System.currentTimeMillis() - debut;
 
-            // Doit avoir attendu environ 500ms (tolérance 200ms)
+
             assertTrue(duree >= 400 && duree < 1500,
                 "L'attente doit expirer en ~500ms, durée réelle : " + duree + "ms");
-            // Le doc est toujours emprunté
+
             assertEquals(DocumentBase.Etat.EMPRUNTE, doc.getEtat());
         }
 
@@ -339,7 +324,7 @@ class MediathequeTest {
             DocumentTest doc = new DocumentTest("T007", "Test Grand chaman emprunt");
             Abonne abA = abonneAdulte();
             Abonne abB = autreAbonne();
-            // Document réservé par B
+
             doc.reservation(abB);
 
             AtomicBoolean attenteFinie = new AtomicBoolean(false);
@@ -354,19 +339,17 @@ class MediathequeTest {
             threadA.start();
             Thread.sleep(200);
 
-            // B vient emprunter → notifyAll() → A se réveille
+
             doc.emprunt(abB);
             threadA.join(2000);
 
             assertTrue(attenteFinie.get());
-            // Le doc est EMPRUNTE, pas DISPONIBLE → A doit informer l'échec
+
             assertEquals(DocumentBase.Etat.EMPRUNTE, doc.getEtat());
         }
     }
 
-    // ================================================================== //
-    //  5. BretteSoft© Sitting Bull – alertes email                       //
-    // ================================================================== //
+
     @Nested
     @DisplayName("BretteSoft© Sitting Bull – alertes email")
     class SittingBullTests {
@@ -387,10 +370,9 @@ class MediathequeTest {
             doc.emprunt(abonneAdulte());
 
             doc.ajouterAlerte("test@example.com");
-            doc.ajouterAlerte("test@example.com"); // doublon
+            doc.ajouterAlerte("test@example.com");
 
-            // On ne peut pas inspecter la liste directement (privée),
-            // mais retour() ne doit pas lever d'exception
+
             assertDoesNotThrow(() -> doc.retour());
         }
 
@@ -403,21 +385,18 @@ class MediathequeTest {
             doc.ajouterAlerte("bob@example.com");
 
             assertDoesNotThrow(() -> doc.retour());
-            // Après retour(), le doc est DISPONIBLE
+
             assertEquals(DocumentBase.Etat.DISPONIBLE, doc.getEtat());
-            // Laisser le thread d'envoi démarrer (même si l'envoi SMTP échouera en test)
+
             Thread.sleep(200);
-            // Si on ajoute une nouvelle alerte et fait un 2e retour, la liste ne doit pas
-            // contenir les anciennes alertes
+
             doc.emprunt(abonneAdulte());
             doc.ajouterAlerte("charlie@example.com");
             assertDoesNotThrow(() -> doc.retour()); // ne doit pas renvoyer à alice et bob
         }
     }
 
-    // ================================================================== //
-    //  6. Singleton Mediatheque                                           //
-    // ================================================================== //
+
     @Nested
     @DisplayName("Singleton Mediatheque")
     class MediathequeTests {

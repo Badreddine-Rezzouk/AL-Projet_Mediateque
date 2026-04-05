@@ -25,9 +25,7 @@ public class Abonne {
     public String  getNom()           { return nom; }
     public Date    getDateNaissance() { return dateNaissance; }
 
-    // ------------------------------------------------------------------ //
-    //  BretteSoft Géronimo – bannissement 1 mois                          //
-    // ------------------------------------------------------------------ //
+
 
     /** Vrai si l'abonné est actuellement banni (levée automatique à expiration). */
     public synchronized boolean isEstBanni() {
